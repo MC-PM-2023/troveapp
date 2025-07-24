@@ -1,0 +1,270 @@
+/* --- Root Variables for Easy Customization --- */
+:root {
+    --primary-color: #007bff;
+    --primary-dark: #0056b3;
+    --dark-bg: #343a40;
+    --danger-color: #dc3545;
+    --danger-dark: #bd2130;
+    --light-bg: #f9f9f9;
+    --shadow: rgba(0, 0, 0, 0.1) 0px 4px 10px;
+    --font-main: "Segoe UI", "Montserrat", sans-serif;
+}
+
+/* --- General Layout --- */
+.box {
+    font-family: var(--font-main);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 280px 1fr;
+    height: 100vh;
+    font-size: 0.95rem;
+    background-color: #fff;
+}
+
+/* --- Header Styling --- */
+.header {
+    grid-column: 1 / -1;
+    padding: 12px 20px;
+    box-shadow: var(--shadow);
+    background-color: #ffffff;
+    border-bottom: 1px solid #eee;
+}
+
+/* --- Main Content --- */
+main {
+    padding: 1.5em;
+    overflow-y: auto;
+    background-color: #fafafa;
+    border-left: 1px solid #eee;
+}
+
+/* --- Sidebar (Aside) Styling --- */
+aside {
+    padding: 1.5em;
+    background-color: #f1f3f5;
+    overflow-y: auto;
+    border-right: 1px solid #ddd;
+}
+
+/* --- Database Table List --- */
+.databasetable {
+    overflow-y: auto;
+}
+
+/* --- Table Wrapper --- */
+.tableWrapper {
+    overflow-x: auto;
+    max-width: 100%;
+    margin-top: 1em;
+}
+
+.flTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em;
+}
+
+.flTable th, .flTable td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ccc;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.flTable th {
+    background-color: var(--light-bg);
+    font-weight: 600;
+    text-align: center;
+}
+
+/* --- Tooltip Styles --- */
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    background-color: #222;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* --- Sort Button --- */
+.sort-button {
+    background: transparent;
+    border: none;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* --- Buttons --- */
+.buttoncontainer {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 1em;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-dark {
+    background-color: var(--dark-bg);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+}
+
+.btn-dark:hover {
+    background-color: #1c1e21;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-dark);
+}
+
+/* --- Search Input --- */
+.searchBar {
+    border: 1px solid #ccc;
+    outline: none;
+    border-radius: 8px;
+    width: 100%;
+    padding: 10px;
+    background-color: #fff;
+}
+.appsicon:hover{
+    background-color: #e1dada;
+    height:70px;
+    width:70px;
+    border-radius: 20px;
+}
+
+/* --- Scrollbar Styling --- */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #e0e0e0;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    border-radius: 10px;
+}
+
+/* --- Responsive Design --- */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .box {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        height: auto;
+    }
+
+    aside {
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    main {
+        border-left: none;
+    }
+
+    .buttoncontainer {
+        justify-content: center;
+    }
+
+    .flTable {
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .box {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .header,
+    main,
+    aside {
+        padding: 10px;
+    }
+
+    .buttoncontainer {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .searchBar {
+        width: 100%;
+    }
+
+    .flTable th, .flTable td {
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+}
+
+/* Small Devices */
+@media (max-width: 480px) {
+    .buttoncontainer {
+        gap: 8px;
+        width: 100%;
+    }
+
+    .searchBar {
+        width: 90%;
+    }
+
+    .flTable th, .flTable td {
+        font-size: 0.8rem;
+        padding: 6px;
+    }
+}
+
