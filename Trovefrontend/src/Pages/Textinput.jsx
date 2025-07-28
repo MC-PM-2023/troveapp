@@ -53,7 +53,7 @@ useEffect(() => {
 
   if (token) {
     axios
-      .get("http://34.47.164.153:3000/api/auth/validatetoken", {
+      .get("http://35.207.199.234:3000/api/auth/validatetoken", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,11 +65,11 @@ useEffect(() => {
       .catch((err) => {
         console.error("Invalid or expired token", err);
         localStorage.removeItem("token"); // Clear the invalid token
-        window.location.href = "http://35.244.53.120:9090/"; // Redirect to login/landing
+        window.location.href = "http://35.207.199.234:8080/"; // Redirect to login/landing
       });
   } else {
     // If no token is present at all
-    window.location.href = "http://34.47.164.153:8080/";
+    window.location.href = "http://35.207.199.234:8080/";
   }
 }, []);
 
