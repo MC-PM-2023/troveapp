@@ -91,7 +91,7 @@ const authcontroller = {
                 token: result.token
             });
         } catch (error) {
-            console.error("Error in login controller:", error.message);
+            // console.error("Error in login controller:", error.message);
             return res.status(400).json({ message: error.message });
         }
     },
@@ -110,7 +110,7 @@ const authcontroller = {
             return res.status(200).json(result)
         }
         catch (error) {
-            console.log("Error in forgot password controller:", error)
+            // console.log("Error in forgot password controller:", error)
             return res.status(400).json({ message: error.message })
         }
 
@@ -127,7 +127,7 @@ const authcontroller = {
             return res.status(200).json(result)
         }
         catch(error){
-            console.error("Error in resendotp controller:",error)
+            // console.error("Error in resendotp controller:",error)
             return res.status(500).json({message:error.message})
         }
     },

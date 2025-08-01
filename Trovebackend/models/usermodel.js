@@ -149,17 +149,18 @@ const user = {
                 { expiresIn: '1h' } // Token valid for 1 hour
             );
     
-            console.log(`User ${email} logged in successfully`);
+            // console.log(`User ${email} logged in successfully`);
     
+           
             // 🔥 Return token along with user details
             return { 
                 message: 'Login successful', 
-                userID: user.id, 
+                userID: user.userid, 
                 username: user.username, 
                 token 
             };
         } catch (error) {
-            console.error("Error during login:", error);
+            // console.error("Error during login:", error);
             throw error;
         } finally {
             connection.release();
@@ -183,11 +184,11 @@ const user = {
             const hashedPassword = await bcrypt.hash(newpassword, 10)
             await connection.execute(queryupdate, [hashedPassword, email])
             await connection.commit();
-            console.log(`Password updated successfully for ${email}`)
+            // console.log(`Password updated successfully for ${email}`)
             return ({ message: "Password updated successfully" })
         }
         catch (error) {
-            console.error("Error in forgotpassword reset model:", error)
+            // console.error("Error in forgotpassword reset model:", error)
             await connection.rollback();
             throw error;
         }
@@ -221,17 +222,17 @@ const user = {
             try {
                 await sendOTPEmail(email, otp)
                 await connection.commit();
-                console.log(`OTP sent to ${email}`)
+                // console.log(`OTP sent to ${email}`)
                 return({message:"OTP Sent successfully"})
             }
             catch (emailerror) {
-                console.error("Error sending resend otp email:", emailerror.message)
+                // console.error("Error sending resend otp email:", emailerror.message)
                 await connection.rollback();
                 throw emailerror;
             }
         }
         catch (error) {
-            console.error("Error in resendotp model:",error)
+            // console.error("Error in resendotp model:",error)
             await connection.rollback();
 throw  error;
 

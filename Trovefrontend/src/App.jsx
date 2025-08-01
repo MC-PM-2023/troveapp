@@ -16,14 +16,14 @@ function App() {
     <>
     <BrowserRouter>
 <Routes>
-  {/* <Route path="/" element={<Signup/>}></Route>
+  <Route path="/" element={<Signup/>}></Route>
   <Route path="/login" element={<Login/>}></Route>
-  <Route path="/landingpage" element={<Landingpage/>}></Route> */}
-  <Route path='/' element={<Textinput/>}></Route>
-  {/* <Route path="/enterotp" element={<Otppage/>}></Route> */}
+  <Route path="/landingpage" element={<Landingpage/>}></Route>
+  <Route path='/textinputsearch' element={<Textinput/>}></Route>
+  <Route path="/enterotp" element={<Otppage/>}></Route>
   <Route path='/searchwithexcel' element={<Searchexcel/>}></Route>
-  {/* <Route path='/resendotp' element={<VerifyOTP/>}></Route>
-  <Route path='/forgotpassword' element={<Forgotpasswordpage/>} ></Route> */}
+  <Route path='/resendotp' element={<VerifyOTP/>}></Route>
+  <Route path='/forgotpassword' element={<Forgotpasswordpage/>} ></Route>
   {/* <Route path="/workflows" element={<Workflow/>}></Route> */}
 </Routes>
     </BrowserRouter>

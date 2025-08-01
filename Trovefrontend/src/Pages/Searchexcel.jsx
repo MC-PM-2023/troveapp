@@ -6,6 +6,7 @@ import axios from 'axios';
 import * as XLSX from 'xlsx';
 import { useNavigate } from 'react-router-dom';
 import trovelogo from '../assets/Trovelogo.gif'
+import avataricon from '../assets/avataricon.png'
 import appsicon from '../assets/appsicon.png'
 import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -33,10 +34,11 @@ export default function Searchexcel() {
 const [showList, setShowList] = useState(false);
 
 
-  const apiURL =import.meta.env.VITE_BACKENDAPIURL;
-  // const apiURL="http://localhost:5000/"
+  // const apiURL =import.meta.env.VITE_BACKENDAPIURL;
+  const apiURL="http://localhost:5000/"
   // console.log(apiURL)
 
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const navigate=useNavigate();
 
@@ -179,6 +181,30 @@ dropdownItemStyle[':hover'] = {
       setCount(response.data.results.length||count)
       //  console.log("Response is:",response.data.results)
       setResults(response.data.results); // Enable download button
+
+      const user=JSON.parse(localStorage.getItem('user'))
+      
+
+      if(user?.id && user?.username){
+        await axios.post(`http://localhost:5000/log/useractivity`,{
+          user_id:user.id,
+          username:user.username,
+          action:"process",
+          action_type:"process",
+          searchText:inputFields.map(f=>f.value).join(','),
+          tableName:selectedtable,
+          message:`user searched using excel in ${selectedtable}`
+          
+        })
+   
+
+       
+        
+      }
+      else{
+        console.warn("user not found in localstorage for logging ")
+      }
+
     } catch (error) {
       console.error('Error in fetching details:', error.response?.data || error.message);
     }
@@ -239,7 +265,7 @@ dropdownItemStyle[':hover'] = {
   // };
 
   //correct select columns to export code
-  const downloadexcel = () => {
+  const downloadexcel =async () => {
   
     const filteredData = results.map(row => {
       const filteredRow = {};
@@ -255,8 +281,46 @@ dropdownItemStyle[':hover'] = {
     XLSX.writeFile(workbook, 'Results.xlsx');
   
     setShowModal(false); // Close the modal after download
+
+    
+try{
+const user=JSON.parse(localStorage.getItem('user'))
+if(user?.id && user?.username){
+  await axios.post(`http://localhost:5000/log/useractivity`,{
+    user_id:user.id,
+    username:user.username,
+    action:download,
+    searchText:selectedColumns.join(','),
+    tableName:selectedtable
+  })
+}
+else{
+  console.warn("user not found in localstorage for download logging")
+}
+} 
+catch(error){
+
+}
+    
   };
   
+
+
+    //     try{
+    //   const user=JSON.parse(localStorage.getItem('user'))
+    //   if(user?.id && user?.username){
+    //     await axios.post('http://localhost:5000/log/useractivity',{
+    //       user_id:user.id,
+    //       username:user.username,
+    //       action:"download", //error part
+    //       searchText:selectedColumns.join(','),
+    //       tableName:selectedtable
+    //     })
+    //   }
+    //   else{
+    //     console.warn("User not found in localstorage for download logging")
+    //   }
+    // }
    
   const handleSort = (column) => {
     // Toggle sorting order
@@ -299,7 +363,7 @@ dropdownItemStyle[':hover'] = {
   const handleselectchange=(value)=>{
 
 if(value==="textinput"){
-  navigate('/');
+  navigate('/textinputsearch');
 }
 else if(value==="workflow"){
    window.open("http://34.47.164.153:6060/", "_blank");
@@ -376,7 +440,7 @@ const appsIconRef = useRef(null);
 
       {/* Left: Analytics Logo */}
       <div>
-        <img src={analyticslogo} alt="Analytics Logo" style={{ height: 50 }} className="logo" />
+        <img src={analyticslogo} alt="Analytics Logo" style={{ height: 40 }} className="logo" />
       </div>
 
       {/* Right: Apps Icon + Trove Logo */}
@@ -388,7 +452,7 @@ const appsIconRef = useRef(null);
         {showDropdown && (
           <div style={{
             position: 'absolute',
-            top: '65px',
+            top: '50px',
             backgroundColor: 'white',
             border: '1px solid #ddd',
             borderRadius: '8px',
@@ -406,7 +470,15 @@ const appsIconRef = useRef(null);
 
  
         {/* Trove Logo */}
-        <img src={trovelogo} alt="Trove Logo" style={{ height: 50 }} className="logo" />
+        {/* <img src={trovelogo} alt="Trove Logo" style={{ height: 40 }} className="logo" /> */}
+
+            <div className="col-auto d-flex align-items-center">
+              
+             
+              <img src={avataricon} alt="avataticon" style={{ height: 30 }} className="logo" />
+               <p className="mb-0 fw-medium me-2">{user.username}</p>
+                    <img src={trovelogo} alt="Trove Logo" style={{ height: 40 }} className="logo" />
+            </div>
 
          {/* Apps Icon */}
         <img
@@ -462,10 +534,10 @@ const appsIconRef = useRef(null);
     {tables.length > 0 ? (
       <select
         className="form-select"
-        value={selectedtable}
+        value={selectedtable??""}
         onChange={e => handleselectedtable(e.target.value)}
       >
-        <option value="" disabled selected>Select a Database</option>
+        <option value="" disabled >Select a Database</option>
         {tables.map((table, index) => (
           <option key={index} value={table}>
             {tableNameMap[table] || table}

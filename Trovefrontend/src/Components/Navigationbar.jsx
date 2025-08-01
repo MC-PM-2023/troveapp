@@ -54,8 +54,11 @@ export default function Navigationbar() {
   const navigate = useNavigate();
 
   // Fetch user details from localStorage
-  const username = localStorage.getItem('username');
+
   const isLoggedIn = localStorage.getItem('auth_token') ? true : false;
+
+      const user = JSON.parse(localStorage.getItem('user'));
+     
 
   const handleLoginClick = () => {
     navigate("/login"); // Navigate to login page
@@ -67,7 +70,7 @@ export default function Navigationbar() {
         {/* Brand Logo & Name */}
         <a className="navbar-brand d-flex align-items-center" href="/">
           {/* <img src={datasolve} alt="Trove Logo" style={{ height: 70, marginRight: 10 }} /> */}
-          MainApp
+          TroveApp
         </a>
 
         {/* Navbar Toggler Button for Mobile */}
@@ -100,7 +103,7 @@ export default function Navigationbar() {
               Login
             </button>
           ) : (
-            <span className="text-white fw-bold me-3">Welcome {username || "Guest"}</span>
+            <span className="text-white fw-bold me-3">Welcome {user.username || "Guest"}</span>
           )}
         </div>
       </div>

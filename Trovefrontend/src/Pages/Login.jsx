@@ -9,11 +9,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
 
-// const apiURL ='http://34.93.2.122:5000/';
-const apiURL=import.meta.env.VITE_BACKENDAPIURL;
-// const apiURL="http://localhost:5000/"
-// const apiURL="http://34.93.84.198:5000/"
-//console.log("Api:",apiURL)
+
+// const apiURL=import.meta.env.VITE_BACKENDAPIURL;
+
+const apiURL="http://localhost:5000/"
+
+// console.log("Api:",apiURL)
 
 export default function Login() {
   const [formdata, setFormdata] = useState({
@@ -178,14 +179,21 @@ const handlelogin = async (e) => {
       if (response.data && response.data.token && response.data.username) {
         // Store token and username
         localStorage.setItem('auth_token', response.data.token);
-        localStorage.setItem('username', response.data.username);
+        // localStorage.setItem('username', JSON.stringify(response.data.username));
+        localStorage.setItem('user', JSON.stringify({
+  id: response.data.userID,       // Make sure this field exists in response
+  username: response.data.username
+}));
+
+
 
         clearInterval(progressInterval);
         setProgress(100);
 
+
         toast.success(response.data.message);
         setTimeout(() => {
-          navigate('/landingpage');
+          navigate('/textinputsearch');
         }, 1000);
       } else {
         // ❌ Show error for invalid login response

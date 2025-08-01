@@ -6,12 +6,13 @@ import axios from 'axios';
 import * as XLSX from 'xlsx';
 import { useNavigate } from 'react-router-dom';
 import trovelogo from '../assets/Trovelogo.gif'
+import avataricon from '../assets/avataricon.png'
 import appsicon from '../assets/appsicon.png'
 import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'; 
 const apiURL = import.meta.env.VITE_BACKENDAPIURL;
 
 
-// console.log("Api:",apiURL)
+
 
 export default function Textinput() {
 
@@ -37,43 +38,43 @@ export default function Textinput() {
 const [showList, setShowList] = useState(false);
 
   const toggleList = () => setShowList(prev => !prev);
-useEffect(() => {
-  // Step 1: If token is passed via URL, save it to localStorage
-  const urlParams = new URLSearchParams(window.location.search);
-  const tokenFromURL = urlParams.get("token");
-console.log(tokenFromURL)
-  if (tokenFromURL) {
-    localStorage.setItem("token", tokenFromURL);
-  }
-}, []);
+// useEffect(() => {
+//   // Step 1: If token is passed via URL, save it to localStorage
+//   const urlParams = new URLSearchParams(window.location.search);
+//   const tokenFromURL = urlParams.get("token");
+// console.log(tokenFromURL)
+//   if (tokenFromURL) {
+//     localStorage.setItem("token", tokenFromURL);
+//   }
+// }, []);
 
-useEffect(() => {
-  // Step 2: Validate token
-  const token = localStorage.getItem("token");
+// useEffect(() => {
+//   // Step 2: Validate token
+//   const token = localStorage.getItem("token");
 
-  if (token) {
-    axios
-      .get("http://35.207.199.234:3000/api/auth/validatetoken", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        // console.log("User validated:", res.data.user);
-        // Optional: Set user info in state if needed
-      })
-      .catch((err) => {
-        console.error("Invalid or expired token", err);
-        localStorage.removeItem("token"); // Clear the invalid token
-        window.location.href = "http://35.207.199.234:8080/"; // Redirect to login/landing
-      });
-  } else {
-    // If no token is present at all
-    window.location.href = "http://35.207.199.234:8080/";
-  }
-}, []);
+//   if (token) {
+//     axios
+//       .get("http://35.207.199.234:3000/api/auth/validatetoken", {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       })
+//       .then((res) => {
+//         // console.log("User validated:", res.data.user);
+//         // Optional: Set user info in state if needed
+//       })
+//       .catch((err) => {
+//         console.error("Invalid or expired token", err);
+//         localStorage.removeItem("token"); // Clear the invalid token
+//         window.location.href = "http://35.207.199.234:8080/"; // Redirect to login/landing
+//       });
+//   } else {
+//     // If no token is present at all
+//     window.location.href = "http://35.207.199.234:8080/";
+//   }
+// }, []);
 
-
+const user = JSON.parse(localStorage.getItem('user'));
 
 const dropdownItemStyle = {
   padding: '8px 12px',
@@ -154,30 +155,49 @@ dropdownItemStyle[':hover'] = {
   };
 
 
-  const fetchkeyworddetails = async () => {
-    setLoading(true);
-    try {
-      // Normalize input fields by converting to lowercase
-      const fields = inputFields.map((field) => ({
-        key: field.dropdownValue.toLowerCase(), // Convert key to lowercase
-        value: field.textBoxValue.toLowerCase() // Convert value to lowercase
-      }));
+const fetchkeyworddetails = async () => {
+  setLoading(true);
+  try {
+    // Normalize input fields by converting to lowercase
+    const fields = inputFields.map((field) => ({
+      key: field.dropdownValue.toLowerCase(),
+      value: field.textBoxValue.toLowerCase()
+    }));
 
-      const response = await axios.post(`${apiURL}searchinput/searchfields`, {
-        tablename: selectedtable,
-        fields
-      });
+    const response = await axios.post(`${apiURL}searchinput/searchfields`, {
+      tablename: selectedtable,
+      fields
+    });
 
-      setSearchResults(response.data.keywordsearch || []);
-      setCount(response.data.keywordsearch?.length || count);
+    setSearchResults(response.data.keywordsearch || []);
+    setCount(response.data.keywordsearch?.length || count);
 
-      // console.log(response.data.keywordsearch); // Debug response data
-    } catch (error) {
-      console.error('Error in fetching the necessary details:', error.response?.data || error.message);
-    } finally {
-      setLoading(false);
+    // ✅ Get user from localStorage correctly
+    const user = JSON.parse(localStorage.getItem('user'));
+    // console.log("Logging user:", user);
+
+    if (user?.id && user?.username) {
+      // ✅ Log user activity with correct key names
+   
+await axios.post(`http://localhost:5000/log/useractivity`, {
+  user_id: user.id,
+  username: user.username,
+  action: "search", // Match backend expectation
+  searchText: fields.map(f => f.value).join(", "),
+  tableName: selectedtable
+});
+
+
+    } else {
+      console.warn("User not found in localStorage for logging.");
     }
-  };
+  } catch (error) {
+    console.error('Error in fetching the necessary details:', error.response?.data || error.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
 
 
@@ -256,7 +276,7 @@ dropdownItemStyle[':hover'] = {
   // }
 
   //correct select columns to export code
-  const downloadexcel = () => {
+  const downloadexcel = async() => {
     const filteredData = searchresults.map((row) => {
       const filteredRow = {};
       selectedColumns.forEach((col) => {
@@ -270,6 +290,29 @@ dropdownItemStyle[':hover'] = {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'FilteredResults');
     XLSX.writeFile(workbook, 'Results.xlsx');
     setShowModal(false); // Close modal
+
+
+    try{
+      const user=JSON.parse(localStorage.getItem('user'))
+    
+      if(user?.id && user?.username){
+        await axios.post('http://localhost:5000/log/useractivity',{
+          user_id:user.id,
+          username:user.username,
+          action:download, //error part
+          searchText:selectedColumns.join(','),
+          tableName:selectedtable
+        })
+        console.log("username:",user.username)
+      }
+      
+      else{
+        console.warn("User not found in localstorage for download logging")
+      }
+    }
+   catch(error){
+    console.error("Error logging download activity:",error.message)
+   } 
   };
 
 
@@ -457,7 +500,7 @@ const appsIconRef = useRef(null);
 
           {/* Left: Analytics Logo */}
           <div className="col-auto">
-            <img src={analyticslogo} alt="Analytics Logo" style={{ height: 50 }} className="logo" />
+            <img src={analyticslogo} alt="Analytics Logo" style={{ height: 40 }} className="logo" />
           </div>
 
           {/* Center: Search Box */}
@@ -475,10 +518,20 @@ const appsIconRef = useRef(null);
           </div>
 
 
+
           {/* Right: Trove Logo */}
+          
+          {/* <p>{user.username}</p>
           <div className="col-auto">
-            <img src={trovelogo} alt="Trove Logo" style={{ height: 50 }} className="logo" />
-          </div>
+          </div> */}
+
+          <div className="col-auto d-flex align-items-center">
+      
+     
+      <img src={avataricon} alt="avataticon" style={{ height: 30 }} className="logo" />
+       <p className="mb-0 fw-medium me-2">{user.username}</p>
+            <img src={trovelogo} alt="Trove Logo" style={{ height: 40 }} className="logo" />
+    </div>
 
   {/* Right: Apps Icon and Dropdown */}
           <div className="col-auto" style={{ position: 'relative' }}>
@@ -494,7 +547,7 @@ const appsIconRef = useRef(null);
             {showDropdown && (
               <div style={{
                 position: 'absolute',
-                top: '60px',
+                top: '45px',
                 right: 0,
                 backgroundColor: 'white',
                 border: '1px solid #ddd',
@@ -577,10 +630,10 @@ const appsIconRef = useRef(null);
     {tables.length > 0 ? (
       <select
         className="form-select"
-        value={selectedtable}
+        value={selectedtable??""}
         onChange={e => handleselectedtable(e.target.value)}
       >
-        <option value="" disabled selected>Select a Database</option>
+        <option value="" disabled >Select a Database</option>
         {tables.map((table, index) => (
           <option key={index} value={table}>
             {tableNameMap[table] || table}
@@ -674,7 +727,7 @@ const appsIconRef = useRef(null);
           <h6 className='mt-1'>
             {searchresults.length > 0
               ? `Results: ${count} Rows`
-              : (search ? "No results found." : "Welcome to Trove!")}
+              : (search ? "No results found." : "Trove Welcomes You!")}
           </h6>
 
           <form className="subnav-search d-flex flex-nowrap ms-auto">

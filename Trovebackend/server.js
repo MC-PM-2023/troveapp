@@ -6,6 +6,7 @@ import Authroutes from './routes/Authroutes.js'
 import Tableroutes from './routes/Tableroutes.js'
 import Searchroutes from './routes/Searchroutes.js';
 import Searchexcelroutes from './routes/Searchexcelroutes.js'
+import logrouter from './routes/Logroutes.js';
 dotenv.config(); // Load environment variables from .env file
 
 const app = express();
@@ -18,7 +19,7 @@ app.use('/auth',Authroutes)
 app.use('/gettables',Tableroutes)
 app.use('/searchinput',Searchroutes)
 app.use('/searchexcel',Searchexcelroutes) 
-
+app.use('/log',logrouter)
 
 
 

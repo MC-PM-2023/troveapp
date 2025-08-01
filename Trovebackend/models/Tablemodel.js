@@ -16,7 +16,7 @@ const Tablemodel = {
         .filter((table) => allowedTables.includes(table));  // Filter allowed tables
       return tables;
     } catch (error) {
-      console.error("Error fetching tables in TableModel:", error);
+      // console.error("Error fetching tables in TableModel:", error);
       throw new Error("Database error");
     }
   },
@@ -32,7 +32,7 @@ const Tablemodel = {
       const columnNames = columns.map((column) => column.Field);
       return columnNames;
     } catch (error) {
-      console.error(`Error fetching columns for table ${table} in TableModel:`, error);
+      // console.error(`Error fetching columns for table ${table} in TableModel:`, error);
       throw new Error(`Error fetching columns for table ${table}`);
     }
   }

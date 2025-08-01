@@ -434,12 +434,12 @@ export default function Gridcards() {
       })
       .then((response) => {
         if (response.status === 200) {
-          console.log("✅ Token verified. Redirecting...");
+          // console.log("✅ Token verified. Redirecting...");
           window.location.href = `http://34.93.2.122:8080/?auth=${token}`;
         }
       })
       .catch((error) => {
-        console.error("❌ Token Verification Error:", error);
+        // console.error("❌ Token Verification Error:", error);
         alert("Access denied. Invalid token.");
         sessionStorage.removeItem("auth_token");
         localStorage.removeItem("auth_token"); // Also clear from localStorage
@@ -452,7 +452,7 @@ export default function Gridcards() {
 
   // Debugging: Log token on component mount
   useEffect(() => {
-    console.log("🛠️ Debug: Checking stored token...");
+    // console.log("🛠️ Debug: Checking stored token...");
     getAuthToken();
   }, []);
 
