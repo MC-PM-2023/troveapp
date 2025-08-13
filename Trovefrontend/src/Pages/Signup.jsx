@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 // const apiURL ='http://34.93.2.122:5000/';
 
 const apiURL=import.meta.env.VITE_BACKENDAPIURL;
+console.log(apiURL)
 // const apiURL ='http://localhost:5000/';
 // console.log("Api:",apiURL)
 
@@ -85,7 +86,7 @@ export default function Signup() {
         }
      
       );
-      console.log("Response is:",response)
+      // console.log("Response is:",response)
   
         setProgress(100);
         setLoading(false);

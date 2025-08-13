@@ -2,7 +2,7 @@ import pool from '../config/database.js';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { sendOTPEmail } from '../utils/email.js';
-import { error } from 'console';
+import { error, profile } from 'console';
 import jwt from 'jsonwebtoken';
 
 const SECRET_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3LCJyb2xlIjoiSVAgVGVhbSIsImlhdCI6MTczOTE4Mjk3MCwiZXhwIjoxNzM5MTkwMTcwfQ.lHW2wB8iBhif7drXABmXCp5aSAd3DA0HP8OWB8TvpPc"
@@ -121,51 +121,62 @@ const user = {
     //     }
     // },
 
-    async login({ email, password }) {
-        const connection = await pool.getConnection();
-        try {
-            const query = 'SELECT * FROM troveusers WHERE email = ?';
-            const [results] = await connection.execute(query, [email]);
-    
-            if (results.length === 0) {
-                throw new Error('User not found');
-            }
-    
-            const user = results[0];
-    
-            if (!user.isverified) {
-                throw new Error('User is not verified. Please verify your account before logging in.');
-            }
-    
-            const isPasswordValid = await bcrypt.compare(password, user.password);
-            if (!isPasswordValid) {
-                throw new Error('Invalid email or password.');
-            }
-    
-            // ✅ Generate JWT token
-            const token = jwt.sign(
-                { userID: user.id, email: user.email },
-                SECRET_KEY,
-                { expiresIn: '1h' } // Token valid for 1 hour
-            );
-    
-            // console.log(`User ${email} logged in successfully`);
-    
-           
-            // 🔥 Return token along with user details
-            return { 
-                message: 'Login successful', 
-                userID: user.userid, 
-                username: user.username, 
-                token 
-            };
-        } catch (error) {
-            // console.error("Error during login:", error);
-            throw error;
-        } finally {
-            connection.release();
+//corrected one
+
+   async login({ email, password }) {
+    const connection = await pool.getConnection();
+    try {
+        // Get user from troveusers
+        const query = 'SELECT * FROM troveusers WHERE email = ?';
+        const [results] = await connection.execute(query, [email]);
+
+        if (results.length === 0) {
+            throw new Error('User not found');
         }
-    },
+
+        const user = results[0];
+
+        if (!user.isverified) {
+            throw new Error('User is not verified. Please verify your account before logging in.');
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            throw new Error('Invalid email or password.');
+        }
+
+        // ✅ Fetch profile link from Users_Profile
+        const profileQuery = 'SELECT Image_URL FROM Users_Profiles WHERE Email_ID = ?';
+        const [profileResults] = await connection.execute(profileQuery, [email]);
+        const profileLink = profileResults.length > 0 ? profileResults[0].Image_URL : null;
+       
+
+        
+        // ✅ Generate JWT token with profile link
+        const token = jwt.sign(
+            { userID: user.id, email: user.email, profileLink },
+            SECRET_KEY,
+            { expiresIn: '1h' }
+        );
+
+        // ✅ Return token along with user details and profile link 
+        return { 
+            message: 'Login successful',
+            userID: user.user_id,
+            username: user.username,
+            email: user.email,
+            profileLink,
+            token
+        };
+    } catch (error) {
+        throw error; 
+    } finally {
+        connection.release(); 
+    }
+},
+
+
+
     
     async forgotpassword({ email, newpassword, confirmnewpassword }) {
 

@@ -212,9 +212,9 @@ export default function Otpcomponent() {
   const [redirecting, setRedirecting] = useState(false); // Track redirection state
   const [otpSent, setOtpSent] = useState(false); // Track whether OTP has been sent
 
-  // const apiURL ='http://localhost:5000/';
-  const apiURL ='http://34.93.2.122:5000/';
-console.log("Api:",apiURL)
+
+ const apiURL =import.meta.env.VITE_BACKENDAPIURL;
+// console.log("Api:",apiURL)
   // Handle OTP input change
   const handleOtpChange = (e, index) => {
     const value = e.target.value;

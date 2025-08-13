@@ -9,7 +9,11 @@ import trovelogo from '../assets/Trovelogo.gif'
 import avataricon from '../assets/avataricon.png'
 import appsicon from '../assets/appsicon.png'
 import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'; 
+import Logfile from './Logfile';
+import NavbarHeader from '../Components/NavbarHeader';
+
 const apiURL = import.meta.env.VITE_BACKENDAPIURL;
+console.log(apiURL)
 
 
 
@@ -169,8 +173,12 @@ const fetchkeyworddetails = async () => {
       fields
     });
 
-    setSearchResults(response.data.keywordsearch || []);
-    setCount(response.data.keywordsearch?.length || count);
+  
+  const results=response.data.keywordsearch||[];
+  const rowCount=results.length;
+
+    setSearchResults(results);
+    setCount(rowCount);
 
     // ✅ Get user from localStorage correctly
     const user = JSON.parse(localStorage.getItem('user'));
@@ -179,12 +187,13 @@ const fetchkeyworddetails = async () => {
     if (user?.id && user?.username) {
       // ✅ Log user activity with correct key names
    
-await axios.post(`http://localhost:5000/log/useractivity`, {
+await axios.post(`${apiURL}log/useractivity`, {
   user_id: user.id,
   username: user.username,
   action: "search", // Match backend expectation
   searchText: fields.map(f => f.value).join(", "),
-  tableName: selectedtable
+  tableName: selectedtable,
+  rowCount:rowCount
 });
 
 
@@ -294,14 +303,16 @@ await axios.post(`http://localhost:5000/log/useractivity`, {
 
     try{
       const user=JSON.parse(localStorage.getItem('user'))
+      const rowCount = filteredData.length; 
     
       if(user?.id && user?.username){
-        await axios.post('http://localhost:5000/log/useractivity',{
+        await axios.post(`${apiURL}log/useractivity`,{
           user_id:user.id,
           username:user.username,
-          action:download, //error part
+          action:"download", //error part
           searchText:selectedColumns.join(','),
-          tableName:selectedtable
+          tableName:selectedtable,
+          rowCount:rowCount
         })
         console.log("username:",user.username)
       }
@@ -379,6 +390,9 @@ if(value==="excel"){
 else if(value==="chatwithsql"){
    window.open("http://34.47.149.98:5050/", "_blank");
 }
+else if(value==="Logfile"){
+  navigate('/logfile')
+}
 else{
  window.open("http://34.47.164.153:6060/", "_blank");
 }
@@ -395,7 +409,9 @@ mcdb_kt_db: "KeyTerm",
   // Add all your custom mappings here
 };
 
-
+useEffect(() => {
+  // console.log("TextInput user state:", user);
+}, [user]);
 
 const appsIconRef = useRef(null);
 
@@ -494,81 +510,23 @@ const appsIconRef = useRef(null);
       </header> */}
 
      
-    <header className="header bg-white shadow-sm">
-      <div className="container-fluid">
-        <div className="row align-items-center">
+     <NavbarHeader
+        user={user}
+        
+        appsIconRef={appsIconRef}
+        handleimageclick={handleimageclick}
+        handleselectchange={handleselectchange}
+        showdropdown={showDropdown}
+        dropdownItemStyle={dropdownItemStyle}
+        searchkeyword={searchkeyword}
+        setSearchkeyword={setSearchkeyword}
+        analyticslogo={analyticslogo}
+        avataricon={avataricon}
+        trovelogo={trovelogo}
+        appsicon={appsicon}
 
-          {/* Left: Analytics Logo */}
-          <div className="col-auto">
-            <img src={analyticslogo} alt="Analytics Logo" style={{ height: 40 }} className="logo" />
-          </div>
-
-          {/* Center: Search Box */}
-          <div className="col d-flex justify-content-center">
-            <input
-              className="form-control search w-50"
-              id="search"
-              type="search"
-              placeholder="Search the field"
-              autoComplete="off"
-              disabled
-              value={searchkeyword ? `Search: ${searchkeyword}` : "Search the field"}
-              onChange={(e) => setSearchkeyword(e.target.value)}
-            />
-          </div>
-
-
-
-          {/* Right: Trove Logo */}
-          
-          {/* <p>{user.username}</p>
-          <div className="col-auto">
-          </div> */}
-
-          <div className="col-auto d-flex align-items-center">
-      
-     
-      <img src={avataricon} alt="avataticon" style={{ height: 30 }} className="logo" />
-       <p className="mb-0 fw-medium me-2">{user.username}</p>
-            <img src={trovelogo} alt="Trove Logo" style={{ height: 40 }} className="logo" />
-    </div>
-
-  {/* Right: Apps Icon and Dropdown */}
-          <div className="col-auto" style={{ position: 'relative' }}>
-            <img
-              src={appsicon}
-              ref={appsIconRef}
-              alt="Apps Icon"
-              className='appsicon'
-              style={{ height: 30, width: 30, cursor: 'pointer' }}
-              onClick={handleimageclick}
-            />
-
-            {showDropdown && (
-              <div style={{
-                position: 'absolute',
-                top: '45px',
-                right: 0,
-                backgroundColor: 'white',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                width: '220px',
-                zIndex: 1000
-              }}>
-                <ul style={{ listStyle: 'none', margin: 0, padding: '10px' }}>
-                  <li style={dropdownItemStyle} onClick={() => handleselectchange('excel')}>Search With Excel</li>
-                  <li style={dropdownItemStyle} onClick={() => handleselectchange('workflow')}>Workflows</li>
-                  <li style={dropdownItemStyle} onClick={() => handleselectchange('chatwithsql')}>Chat With SQL</li>
-                </ul>
-              </div>
-            )}
-          </div>
-
-        </div>
-      </div>
-    </header>
-      <aside >
+      />
+      <aside className='sidebar' >
         {/* <div className='databasetables'>
           <h6>Select the Database Table</h6>
           <div className="d-flex flex-wrap gap-2">
@@ -711,6 +669,7 @@ const appsIconRef = useRef(null);
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" className="bi bi-search" viewBox="0 0 15 20">
                       <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
                     </svg>
+                    
                   </button>
                 </div>
               </div>
@@ -722,13 +681,27 @@ const appsIconRef = useRef(null);
         </div>
       </aside>
 
-      <main>
-        <div className="d-flex mb-4">
-          <h6 className='mt-1'>
-            {searchresults.length > 0
-              ? `Results: ${count} Rows`
-              : (search ? "No results found." : "Trove Welcomes You!")}
-          </h6>
+      <main className=''>
+        {/* <div className="d-flex mb-4">
+ 
+   <h6
+  className={`mt-1 lh-base ${searchresults.length === 0 ? 'text-start d-block fw-semibold' : ''}`}
+>
+  {searchresults.length > 0 ? (
+    `Results: ${count} Rows`
+  ) : search ? (
+    "No results found."
+  ) : (
+    <>
+      Welcome to <span className="fw-bold">Trove</span>,{" "}
+      <span className="text-capitalize fw-bold ">{user.username.toLowerCase()}</span>.
+      Every dataset has a gem. Let’s find yours.<br />
+    <h6 className='text-center'>Hunt the treasure.</h6>  
+    </>
+  )}
+</h6>
+
+
 
           <form className="subnav-search d-flex flex-nowrap ms-auto">
             <input
@@ -750,7 +723,102 @@ const appsIconRef = useRef(null);
               </svg>Export
             </button>
           </form>
-        </div>
+        </div> */}
+
+         <div className="d-flex mb-4 align-items-center justify-content-between">
+    {searchresults.length > 0 ? (
+      <h6 className="mt-1 fw-semibold mb-0">Results: {count} Rows</h6>
+    ) : search ? (
+      <h6 className="mt-1 fw-semibold mb-0 text-danger">No results found.</h6>
+    ) : null}
+
+    <form className="subnav-search d-flex flex-nowrap ms-auto">
+      <input
+        className="form-control-sm me-2 border"
+        type="search"
+        placeholder="Search"
+        aria-label="Search"
+        style={{ outline: "none", border: "none" }}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      <button
+        type="button"
+        className="btn btn-dark btn-sm bg-gradient downloadbutton"
+        onClick={() => setShowModal(true)}
+        disabled={!searchresults || searchresults.length === 0}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-cloud-arrow-down-fill" viewBox="0 0 20 20">
+          <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2m2.354 6.854-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708"></path>
+        </svg> Export
+      </button>
+    </form>
+  </div>
+
+  {/* {searchresults.length === 0 && !search && (
+    <div className="d-flex justify-content-center align-items-center flex-column" style={{ height: "200px" }}>
+      <h4 className="fw-semibold" style={{fontFamily:"Libertinus Serif"}}>
+        Welcome to <span className="text- fw-bold" style={{fontFamily:"Libertinus Serif"}}
+>Trove</span>,{" "}
+        <span className="text-capitalize fw-bold" style={{fontFamily:"Libertinus Serif"}}>{user.username.toLowerCase()}</span>.
+      </h4>
+      <p className="fw-semibold mb-1" style={{fontFamily:"Libertinus Serif"}}>Every dataset has a gem. Let’s find yours.</p>
+        <p className="fw-semibold mb-1"><em style={{fontFamily:"Libertinus Serif", color:"#808080"}}>Hunt the Treasure.</em></p>
+      
+  
+    </div>
+  )} */}
+
+ {searchresults.length === 0 && !search && (
+  <div
+    className="d-flex position-relative justify-content-start align-items-center"
+    style={{ minHeight: "250px" }}
+  >
+    {/* Left: Profile Card with text overlay on image */}
+    <div
+      className="card shadow-sm me-4"
+      style={{ width: "300px", fontFamily: "Libertinus Serif" }}
+    >
+      <div className="position-relative">
+        <img
+          src={user.profilelink}
+          alt="Profile"
+          className="card-img-top"
+          style={{ height: "300px", objectFit: "cover" }}
+        />
+      </div>
+    </div>
+
+    <div className="d-flex flex-column align-items-start text-center">
+      <h4
+        className="fw-semibold"
+        style={{ fontFamily: "Libertinus Serif" }}
+      >
+        Hello,{" "}
+        <span className="text-capitalize fw-bold">
+          {user.username.toLowerCase()}
+        </span>.
+      </h4>
+      <p
+        className="fw-semibold mb-1"
+        style={{ fontFamily: "Libertinus Serif" }}
+      >
+        Every dataset has a gem. Let’s find yours.
+      </p>
+      <p className="fw-semibold mb-1">
+        <em
+          style={{
+            fontFamily: "Libertinus Serif",
+            color: "#808080",
+          }}
+        >
+          Hunt the Treasure.
+        </em>
+      </p>
+    </div>
+  </div>
+)}
+
+
 
         <div className="container" style={{ maxHeight: "500px" }}>
           {loading ? (
@@ -790,7 +858,7 @@ const appsIconRef = useRef(null);
                     ))}
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className='tablebody text-white'>
                   {filteredResults.slice(0, 100).map((row, index) => (
                     <tr key={index}>
                       {Object.values(row).map((value, i) => {
@@ -866,8 +934,14 @@ const appsIconRef = useRef(null);
             </div>
           </div>
         )}
+        <p className="text-center mt-2">Copyrights &copy; Datasolve Analytics Pvt Ltd</p> 
       </main>
-
+   
     </div>
+    
+    
   )
 }
+
+  
+

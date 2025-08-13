@@ -10,9 +10,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
 
 
-// const apiURL=import.meta.env.VITE_BACKENDAPIURL;
+const apiURL=import.meta.env.VITE_BACKENDAPIURL;
 
-const apiURL="http://localhost:5000/"
+
 
 // console.log("Api:",apiURL)
 
@@ -39,6 +39,7 @@ export default function Login() {
       toast.error('Email is Required!');
       return false;
     }
+    
     if (!domainemailregex.test(formdata.email)) {
       toast.error('Email address is not valid!');
       return false;
@@ -54,109 +55,7 @@ export default function Login() {
     return true;
   };
 
-  //   e.preventDefault();
-  //   if (validateform()) {
-  //     setLoading(true);
-  //     setProgress(30);
-  //     try {
-  //       const response = await axios.post('http://localhost:5000/auth/login', formdata, {
-  //         onUploadProgress: (progressEvent) => {
-  //           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-  //           setProgress(percentCompleted);
-  //         },
-  //       });
 
-  //       setProgress(100);
-  //       setLoading(false);
-  //       toast.success(response.data.message);
-  //       setTimeout(() => navigate('/landingpage'), 1000);
-  //     } catch (error) {
-  //       setLoading(false);
-  //       setProgress(0);
-  //       toast.error(error.response?.data.message || 'An error occurred. Please try again.');
-  //     } finally {
-  //       setTimeout(() => {
-  //         setProgress(0);
-  //         setLoading(false);
-  //       }, 2000);
-  //     }
-  //   }
-  // };
-  // const handlelogin = async (e) => {
-  //   e.preventDefault();
-  //   if (validateform()) {
-  //     setLoading(true);
-  //     let currentProgress = 0;
-  
-  //     // Gradually increase progress
-  //     const progressInterval = setInterval(() => {
-  //       currentProgress += 10; // Increment progress by 10%
-  //       setProgress((prev) => Math.min(prev + 10, 90)); // Cap progress at 90% until the API responds
-  //     }, 300); // Update every 300ms
-  
-  //     try {
-  //       const response = await axios.post('http://localhost:5000/auth/login', formdata);
-  
-  //       // When API call is done, set progress to 100% and stop the interval
-  //       clearInterval(progressInterval);
-  //       setProgress(100);
-  
-  //       toast.success(response.data.message);
-  //       setTimeout(() => {
-  //         navigate('/landingpage');
-  //       }, 1000);
-  //     } catch (error) {
-  //       // Stop progress and reset on error
-  //       clearInterval(progressInterval);
-  //       setProgress(0);
-  //       toast.error(error.response?.data.message || 'An error occurred. Please try again.');
-  //     } finally {
-  //       setTimeout(() => {
-  //         setLoading(false);
-  //         setProgress(0);
-  //       }, 2000); // Reset the progress bar after 2 seconds
-  //     }
-  //   }
-  // };
-//   const handlelogin = async (e) => {
-//   e.preventDefault();
-//   if (validateform()) {
-//     setLoading(true);
-//     let currentProgress = 0;
-
-//     const progressInterval = setInterval(() => {
-//       currentProgress += 10;
-//       setProgress((prev) => Math.min(prev + 10, 90));
-//     }, 300);
-
-//     try {
-//       const response = await axios.post(`${apiURL}auth/login`, formdata);
-
-//       console.log("Login response value: ", response.data); // Check if the response structure is correct
-
-      
-//       console.log("auth_token:",response.data.token)
-//       console.log("username:",response.data.username)
-
-//       clearInterval(progressInterval);
-//       setProgress(100);
-
-//       toast.success(response.data.message);
-//       setTimeout(() => {
-//         navigate('/landingpage');
-//       }, 1000);
-//     } catch (error) {
-//       clearInterval(progressInterval);
-//       setProgress(0);
-//       toast.error(error.response?.data.message || 'An error occurred. Please try again.');
-//     } finally {
-//       setTimeout(() => {
-//         setLoading(false);
-//         setProgress(0);
-//       }, 2000);
-//     }
-//   }
-// };
 
 
 const handlelogin = async (e) => {
@@ -173,16 +72,19 @@ const handlelogin = async (e) => {
     try {
       const response = await axios.post(`${apiURL}auth/login`, formdata);
 
-     // console.log("Login response value: ", response.data);
+
+    //  console.log("Login response value: ", response.data);
 
       // ✅ Check if the response contains the expected data
-      if (response.data && response.data.token && response.data.username) {
+      if (response.data && response.data.token && response.data.username ) {
         // Store token and username
         localStorage.setItem('auth_token', response.data.token);
         // localStorage.setItem('username', JSON.stringify(response.data.username));
         localStorage.setItem('user', JSON.stringify({
   id: response.data.userID,       // Make sure this field exists in response
-  username: response.data.username
+  username: response.data.username,
+  profilelink:response.data.profilelink,
+  email:response.data.email
 }));
 
 

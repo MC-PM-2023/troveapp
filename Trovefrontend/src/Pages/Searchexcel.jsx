@@ -32,11 +32,10 @@ export default function Searchexcel() {
   const [selectedColumns, setSelectedColumns] = useState([]);
     const[showDropdown,setShowDropdown]=useState(false)
 const [showList, setShowList] = useState(false);
+const[open ,setOpen]=useState(false)
 
-
-  // const apiURL =import.meta.env.VITE_BACKENDAPIURL;
-  const apiURL="http://localhost:5000/"
-  // console.log(apiURL)
+  const apiURL =import.meta.env.VITE_BACKENDAPIURL;
+// console.log("Apiurl:",apiURL) 
 
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -177,23 +176,28 @@ dropdownItemStyle[':hover'] = {
         },
       });
       
-      setSearchResults(response.data.results || []);
-      setCount(response.data.results.length||count)
+
+      const results=response.data.results||[]
+      const rowCount=results.length;
+
+      setSearchResults(results);
+      setCount(rowCount)
       //  console.log("Response is:",response.data.results)
-      setResults(response.data.results); // Enable download button
+      setResults(results); // Enable download button
 
       const user=JSON.parse(localStorage.getItem('user'))
       
 
       if(user?.id && user?.username){
-        await axios.post(`http://localhost:5000/log/useractivity`,{
+        await axios.post(`${apiURL}log/useractivity`,{
           user_id:user.id,
           username:user.username,
           action:"process",
           action_type:"process",
           searchText:inputFields.map(f=>f.value).join(','),
           tableName:selectedtable,
-          message:`user searched using excel in ${selectedtable}`
+          rowCount:rowCount,
+          message:`user searched using excel in ${selectedtable} and got ${rowCount} results.`
           
         })
    
@@ -285,13 +289,15 @@ dropdownItemStyle[':hover'] = {
     
 try{
 const user=JSON.parse(localStorage.getItem('user'))
+
 if(user?.id && user?.username){
-  await axios.post(`http://localhost:5000/log/useractivity`,{
+  await axios.post(`${apiURL}log/useractivity`,{
     user_id:user.id,
     username:user.username,
-    action:download,
+    action:"download",
     searchText:selectedColumns.join(','),
-    tableName:selectedtable
+    tableName:selectedtable,
+    rowCount:filteredData.length
   })
 }
 else{
@@ -299,7 +305,7 @@ else{
 }
 } 
 catch(error){
-
+console.log("Error logging download acivity:",error.message)
 }
     
   };
@@ -368,6 +374,9 @@ if(value==="textinput"){
 else if(value==="workflow"){
    window.open("http://34.47.164.153:6060/", "_blank");
 }
+else if (value==="Logfile"){
+  navigate('/logfile')
+}
 else{
  window.open("http://34.47.164.153:5050/", "_blank");
 }
@@ -395,6 +404,16 @@ const appsIconRef = useRef(null);
       };
     }
   }, []);
+
+
+
+    const handleLogout=async()=>{
+    const token=localStorage.removeItem("auth_token");
+    const user=localStorage.removeItem("user")
+    const email=localStorage.removeItem('email')
+    navigate("/login")
+  
+}
 
   return (
     <div className='box'>
@@ -464,6 +483,7 @@ const appsIconRef = useRef(null);
               <li style={dropdownItemStyle} onClick={() => handleselectchange('textinput')}>Text Input Search</li>
               <li style={dropdownItemStyle} onClick={() => handleselectchange('workflow')}>Workflows</li>
               <li style={dropdownItemStyle} onClick={() => handleselectchange('chatsql')}>Chat With SQL</li>
+              <li style={dropdownItemStyle} onClick={()=>handleselectchange('Logfile')}>Activity Logs</li>
             </ul>
           </div>
         )}
@@ -475,8 +495,38 @@ const appsIconRef = useRef(null);
             <div className="col-auto d-flex align-items-center">
               
              
-              <img src={avataricon} alt="avataticon" style={{ height: 30 }} className="logo" />
-               <p className="mb-0 fw-medium me-2">{user.username}</p>
+              {/* <img src={avataricon} alt="avataticon" style={{ height: 30 }} className="logo" /> */}
+               {/* <p className="mb-0 fw-medium me-2">{user.username}</p> */}
+
+
+<div className="dropdown" style={{ position: "relative" }}>
+  <img
+    src={user?.profilelink || avataricon}
+    alt="Profile"
+    className="rounded-circle border border-2 shadow-sm me-2"
+    height={45}
+    width={45}
+   onClick={()=>setOpen(!open)}
+    style={{ objectFit: "cover", cursor: "pointer" }}
+  />
+
+  
+{open &&
+   <ul
+      className="dropdown-menu dropdown-menu-end show"
+      style={{ position: "absolute", top: "110%", right: 0 }}
+    >
+      <li className="dropdown-item-text"><small>{user?.email}</small></li>
+      <li><hr className="dropdown-divider" /></li>
+      <li>
+        <button className="dropdown-item" onClick={handleLogout} >
+          <i className="bi bi-box-arrow-right me-2"></i> Logout
+        </button>
+      </li>
+    </ul>
+  } 
+</div>
+
                     <img src={trovelogo} alt="Trove Logo" style={{ height: 40 }} className="logo" />
             </div>
 
@@ -498,7 +548,7 @@ const appsIconRef = useRef(null);
 
 
 
-      <aside>
+      <aside className='sidebar'>
         {/* <div className='databasetables '>
           <h6>Select the Database Table</h6>
         </div>
@@ -610,14 +660,22 @@ const appsIconRef = useRef(null);
       </aside>
 
       <main>
-        <div className="d-flex mb-4">
+        <div className="d-flex mb-4 flex-wrap align-items-center justify-content-between">
           {/* <h4 id="icons" className="mb-0">{selectedtable ? `${selectedtable} Table Connected Successfully !` : "Database Table Not Connected"}</h4> */}
           {/* <h5 className='mt-1'>Results: {count} Rows</h5> */}
+
+          {/* previous code */}
           {Array.isArray(results) && results.length === 0 ? (
-      <h6 className="mb-0">Welcome to Search With Excel</h6>
+      <h6 className="mb-0"></h6>
     ) : (
       <h6 className="mt-1">Results: {count} Rows</h6>
     )}
+
+
+
+
+
+
           <form className="subnav-search d-flex flex-nowrap ms-auto">
           <input className="form me-2 border" type="search" placeholder="Search" aria-label="Search" onChange={(e)=>setSearch(e.target.value)} style={{outline:"none",border:"none"}}/>
             <button type="button" className="btn btn-dark btn-outline bg-gradient downloadbutton" onClick={()=>setShowModal(true)} disabled={!results || results.length === 0}>
@@ -667,7 +725,7 @@ const appsIconRef = useRef(null);
         </tr>
       </thead>
 
-      <tbody>
+      <tbody className='tablebody text-white'>
   {results
     .filter((row) =>
       Object.values(row).some(
@@ -758,7 +816,7 @@ const appsIconRef = useRef(null);
     </div>
   </div>
 )} 
-
+ <p className="text-center mt-2">Copyrights &copy; Datasolve Analytics Pvt Ltd</p> 
       </main>
 
     

@@ -1,3 +1,4 @@
+import { profile } from 'node:console';
 import user from '../models/usermodel.js';
 import jwt from 'jsonwebtoken';
 // import { sendOTPEmail } from '../utils/email.js';
@@ -88,7 +89,9 @@ const authcontroller = {
                 message: result.message,
                 userID: result.userID,
                 username: result.username,
-                token: result.token
+                email:result.email,
+                token: result.token,
+                profilelink:result.profileLink
             });
         } catch (error) {
             // console.error("Error in login controller:", error.message);

@@ -5,7 +5,7 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import datasolvelogo from "../assets/datasolve.png";
 
-const apiURL ='http://34.93.2.122:5000/';
+const apiURL =import.meta.env.VITE_BACKENDAPIURL
 // console.log("Api:",apiURL)
 
 export default function Forgotpassword() {

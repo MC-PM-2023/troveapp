@@ -17,9 +17,12 @@
     grid-template-rows: auto 1fr auto;
     grid-template-columns: 280px 1fr;
     height: 100vh;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     background-color: #fff;
+  
+ 
 }
+
 
 /* --- Header Styling --- */
 .header {
@@ -36,6 +39,11 @@ main {
     overflow-y: auto;
     background-color: #fafafa;
     border-left: 1px solid #eee;
+    background-image: url("../assets/Zentra17.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position:"center";
+        
 }
 
 /* --- Sidebar (Aside) Styling --- */
@@ -44,6 +52,13 @@ aside {
     background-color: #f1f3f5;
     overflow-y: auto;
     border-right: 1px solid #ddd;
+  
+}
+.sidebar{
+      background-color: #eae7e2;
+}
+.tablebody{
+    background-color: #40788a;
 }
 
 /* --- Database Table List --- */
