@@ -38,11 +38,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const config = {
-  host: process.env.DB_HOST || 'localhost',
+  // host: process.env.DB_HOST || 'localhost',
+  socketPath: `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'mc',
-  port: process.env.DB_PORT || 3306,
+  database:  'mc',
+  // port: process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -53,7 +54,7 @@ const pool = mysql.createPool(config);
 (async () => {
   try {
     const connection = await pool.getConnection();
-    console.log(`✅ Connected to the ${config.host} database successfully!`);
+    console.log(`✅ Connected to the ${config.socketPath} database successfully!`);
     connection.release();
   } catch (error) {
     console.error('❌ Error connecting to the database:', error.message);

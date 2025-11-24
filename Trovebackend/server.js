@@ -7,12 +7,25 @@ import Tableroutes from './routes/Tableroutes.js'
 import Searchroutes from './routes/Searchroutes.js';
 import Searchexcelroutes from './routes/Searchexcelroutes.js'
 import logrouter from './routes/Logroutes.js';
+// import path from 'path';
+// import { fileURLToPath } from 'url';
+
 dotenv.config(); // Load environment variables from .env file
 
 const app = express();
 
 // Middleware
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: [
+    // "https://troveapp.vercel.app/",
+    "https://troveapp.vercel.app",
+    "https://trove.datasolve-analytics.net"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
 app.use(express.json())
 
 app.use('/auth',Authroutes)

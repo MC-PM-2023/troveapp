@@ -1,0 +1,26 @@
+runtime: nodejs20
+env: standard
+service: trovebackend
+entrypoint: node server.js
+instance_class: F1
+
+env_variables:
+  NODE_ENV: "production"
+  INSTANCE_CONNECTION_NAME: "theta-messenger-459613-p7:asia-south1:appsadmin"
+  DB_USER: "datasolve"
+  DB_PASS: "datasolve@2025"
+  DB_NAME: "mainapp"
+
+beta_settings:
+  cloud_sql_instances: "theta-messenger-459613-p7:asia-south1:appsadmin"
+  
+
+automatic_scaling:
+  min_instances: 0         # ZERO = no cost when idle
+  max_instances: 1         # 1 instance max
+  min_idle_instances: 0    # keep ZERO idle servers
+  max_idle_instances: 0    # Google never keeps extra
+  target_cpu_utilization: 0.85
+  max_pending_latency: 2000ms
+
+
