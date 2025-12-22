@@ -9,7 +9,7 @@ env_variables:
   INSTANCE_CONNECTION_NAME: "theta-messenger-459613-p7:asia-south1:appsadmin"
   DB_USER: "datasolve"
   DB_PASS: "datasolve@2025"
-  DB_NAME: "mainapp"
+  DB_NAME: "mc"
 
 beta_settings:
   cloud_sql_instances: "theta-messenger-459613-p7:asia-south1:appsadmin"

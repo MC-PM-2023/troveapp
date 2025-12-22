@@ -8,8 +8,8 @@ import Otppage from './Pages/Otppage';
 import Searchexcel from './Pages/Searchexcel';
 import VerifyOTP from './Pages/VerifyOTP';
 import Forgotpasswordpage from './Pages/Forgotpasswordpage';
-
 import Logfile from './Pages/Logfile';
+
 
 function App() {
 
@@ -25,7 +25,7 @@ function App() {
   <Route path='/searchwithexcel' element={<Searchexcel/>}></Route>
   <Route path='/resendotp' element={<VerifyOTP/>}></Route>
   <Route path='/forgotpassword' element={<Forgotpasswordpage/>} ></Route>
- 
+
   <Route path="/logfile" element={<Logfile/>}></Route>
 </Routes>
     </BrowserRouter>

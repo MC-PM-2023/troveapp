@@ -3,7 +3,7 @@ import pool from "../config/database.js";
 
 const Tablemodel = {
   getTables: async () => {
-    const allowedTables = ['mcdb_dr_db', 'mcdb_kt_db', 'mcdb_nc_db', 'mcdb_ol_db', 'mcdb_org_db','mcdb_st_db'];
+    const allowedTables = ['mcdb_dr_db', 'mcdb_kt_db', 'mcdb_nc_db', 'mcdb_ol_db', 'mcdb_org_db','mcdb_st_db','mcdb_nc_db_sample'];
     const query = "SHOW TABLES FROM mc";
 
     try {

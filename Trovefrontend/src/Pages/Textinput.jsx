@@ -94,41 +94,41 @@ dropdownItemStyle[':hover'] = {
 };
 
 
-  useEffect(() => {
-    // Disable copy, cut, and paste actions
-    const disableActions = (e) => {
-      e.preventDefault();
+  // useEffect(() => {
+  //   // Disable copy, cut, and paste actions
+  //   const disableActions = (e) => {
+  //     e.preventDefault();
 
-    };
+  //   };
 
-    // Disable right-click context menu
-    const disableRightClick = (e) => {
-      e.preventDefault();
+  //   // Disable right-click context menu
+  //   const disableRightClick = (e) => {
+  //     e.preventDefault();
 
-    };
+  //   };
 
-    // Disable text selection
-    const disableTextSelection = () => {
-      document.body.style.userSelect = "none"; // Disable text selection globally
-    };
+  //   // Disable text selection
+  //   const disableTextSelection = () => {
+  //     document.body.style.userSelect = "none"; // Disable text selection globally
+  //   };
 
-    // Add event listeners to disable actions
-    document.addEventListener("copy", disableActions);
-    document.addEventListener("cut", disableActions);
-    document.addEventListener("paste", disableActions);
-    document.addEventListener("contextmenu", disableRightClick);
+  //   // Add event listeners to disable actions
+  //   document.addEventListener("copy", disableActions);
+  //   document.addEventListener("cut", disableActions);
+  //   document.addEventListener("paste", disableActions);
+  //   document.addEventListener("contextmenu", disableRightClick);
 
-    // Disable text selection on body
-    disableTextSelection();
+  //   // Disable text selection on body
+  //   disableTextSelection();
 
-    // Cleanup the event listeners on component unmount
-    return () => {
-      document.removeEventListener("copy", disableActions);
-      document.removeEventListener("cut", disableActions);
-      document.removeEventListener("paste", disableActions);
-      document.removeEventListener("contextmenu", disableRightClick);
-    };
-  }, []);
+  //   // Cleanup the event listeners on component unmount
+  //   return () => {
+  //     document.removeEventListener("copy", disableActions);
+  //     document.removeEventListener("cut", disableActions);
+  //     document.removeEventListener("paste", disableActions);
+  //     document.removeEventListener("contextmenu", disableRightClick);
+  //   };
+  // }, []);
 
 
   useEffect(() => {
